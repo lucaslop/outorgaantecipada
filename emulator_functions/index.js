@@ -1,3 +1,6 @@
+const ANIMATION_SPEED = 1000;
+const DECREASE_BATTERY = 2;
+
 let isBlockMoving = true;
 
 const unexpectedButton = document.getElementById('unexpectedButton');
@@ -13,16 +16,15 @@ const powerOffButton = document.getElementById('powerOffButton');
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
 const resetButton = document.getElementById('resetButton');
-const battery = document.getElementById('battery');
+const battery = document.getElementById('battery-level');
 const powerLed = document.getElementById('powerLed');
 const startLed = document.getElementById('startLed');
 const simulateBatteryButton = document.getElementById('simulateBatteryButton');
-const batteryText = document.querySelector('.battery-container div');
+const batteryText = document.querySelector('.battery-text');
 const blockDir = { right: '-90deg', left: '90deg', up: '180deg', down: '0deg' }
 let blockPosition = { row: 0, col: 0, dir: 'right' };
 let movingRight = true;
 let arrowDirection = '';  
-let animationSpeed = 500;
 let animationInterval;
 let batteryLevel = 100;
 let isPowerOn = false;
@@ -209,17 +211,21 @@ function resetAnimation() {
 
 function decreaseBatteryLevel() {
     if (batteryLevel > 0) {
-        batteryLevel -= 1;
+        batteryLevel -= DECREASE_BATTERY;
         updateBatteryLevel();
-    } else {
+    } 
+    
+    if (batteryLevel <= 0) {
         stopAnimation();
-        battery.classList.add('battery-red');
+        batteryText.classList.add('battery-text-red');
         startButton.disabled = true;
+        powerButton.disabled = true;
     }
 }
 
 function updateBatteryLevel() {
     battery.style.width = `${batteryLevel}%`;
+    batteryText.textContent = `${batteryLevel}%`
 }
 
 function togglePower() {
@@ -263,11 +269,11 @@ function startAnimation() {
         isAnimationStarted = true;
         animationInterval = setInterval(() => {
             moveBlock();
-        }, animationSpeed);
+        }, ANIMATION_SPEED);
 
         purpleBlockInterval = setInterval(() => {
             movePurpleBlock();
-        }, animationSpeed / 2);
+        }, ANIMATION_SPEED / 2);
     }
 }
 
