@@ -1,0 +1,46 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Emulador</title>
+
+    <link rel="stylesheet" type="text/css" href="./stylesheet/styles.css"/>
+</head>
+<body>
+    <audio id="hornSound" src="./media/audio.wav" type="audio/mpeg"></audio>
+
+    <div class="controls">
+        <div class="led led-off" id="powerLed"></div>
+        <button class="button" id="powerButton">Ligar</button>
+        <div class="led led-off" id="startLed"></div>
+        <button class="button" id="startButton">Iniciar Movimento</button>
+        <button class="button" id="stopButton">Parar Movimento</button>
+        <button class="button" id="resetButton">Resetar</button>
+        <button class="button" id="powerOffButton">Desligar</button>
+        <div class="led led-off" id="unexpectedLed"></div>
+        <button class="button" id="unexpectedButton">Simular Evento Inesperado</button>
+
+        <div class="horn horn-off" id="horn">📣</div>
+        <button class="button" id="simulateBatteryButton">Simular Bateria Esgotada</button>
+
+        <div class="battery-container">
+            <div class="battery" id="battery"></div>
+            <div>Bateria</div>
+            <div class="arrows-container">
+                <div>
+                    <div class="arrow arrow-up arrow-off" id="arrowUp"></div>
+                    <div class="arrow arrow-down arrow-off" id="arrowDown"></div>
+                    <div class="arrow arrow-left arrow-off" id="arrowLeft"></div>
+                    <div class="arrow arrow-right arrow-off" id="arrowRight"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container" id="grid"></div>
+    
+    <script type="text/javascript" src="emulator_functions/index.js"></script>
+</body>
+</html>
