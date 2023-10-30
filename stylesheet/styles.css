@@ -10,7 +10,7 @@ body {
 }
 
 .controls {
-  width: 50%;
+  width: 30%;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -20,18 +20,39 @@ body {
   color: #fff;
 }
 
+.lawn {
+  width: 70%;
+  /* height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 10px;
+
+}
+
 .button {
-  background-color: #1976D2;
-  color: #fff;
+  display: inline-block;
+  padding: .5rem .6rem;
+  background-color: #2ecc71;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
   border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
   cursor: pointer;
-  margin: 5px 0;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button:hover {
-  background-color: #1565C0;
+  background-color: #27ae60;
+  transform: scale(1.05);
+  box-shadow: 0px 4px 8px rgba(46, 204, 113, 0.3);
+}
+
+.button:active {
+  background-color: #218c74;
 }
 
 .led {
@@ -52,26 +73,40 @@ body {
 
 .battery-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: .5rem;
   align-items: center;
   margin: 20px 0;
 }
 
 .battery {
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(90deg, #4CAF50 0%, #f5f5f5 100%);
-  border: 1px solid #ccc;
+  width: 100px;
+  height: 40px;
+  border: 2px solid #333;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.battery-level {
+  height: 100%;
+  background-color: #07ff0f;
 }
 
 .battery-text {
-  margin: 10px 0;
+  text-align: center;
+  line-height: 40px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.battery-text-red {
+  color: #F44336;
 }
 
 .grid-container {
-  width: 50%;
-  padding: 10px;
+  width: 100%;
   display: grid;
+  place-content: center;
   grid-template-columns: repeat(9, 50px);
   grid-template-rows: repeat(8, 50px);
   gap: 1px;
@@ -79,11 +114,17 @@ body {
 }
 
 .grid-item {
+  /* width: 50px;
+  height: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.1); */
+
   width: 50px;
   height: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #8db580;
+  border: 2px solid #5a7247;
+  border-radius: 5px;
+  background-image: linear-gradient(90deg, #8db580 50%, #79a372 50%);
 }
-
 
 .block {
   width: 50px;
@@ -94,10 +135,8 @@ body {
 }
 
 .block-rotate {
-  animation: rotate 2s linear; /* Adicione esta linha */
+  animation: rotate 2s linear;
 }
-
-
 
 .block-black-1 {
   background: url('../media/arvore.png');
@@ -130,10 +169,6 @@ body {
   background: none;
   background-color: #000;
 }
-.battery-red {
-background: linear-gradient(90deg, #F44336 0%, #f5f5f5 100%);
-}
-
 
 .arrow {
   width: 0;
@@ -182,4 +217,14 @@ background: linear-gradient(90deg, #F44336 0%, #f5f5f5 100%);
 .horn-off {
   background-color: #ccc;
   color: #666;
+}
+
+.sun {
+  width: 50px;
+  height: 50px;
+  background-color: #ffd600;
+  border-radius: 50%;
+  /* top: 20px;  */
+  /* right: 20px; */
+  box-shadow: 0px 0px 20px rgba(255, 214, 0, 0.7);
 }
