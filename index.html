@@ -26,20 +26,26 @@
         <button class="button" id="simulateBatteryButton">Simular Bateria Esgotada</button>
 
         <div class="battery-container">
-            <div class="battery" id="battery"></div>
-            <div>Bateria</div>
-            <div class="arrows-container">
-                <div>
-                    <div class="arrow arrow-up arrow-off" id="arrowUp"></div>
-                    <div class="arrow arrow-down arrow-off" id="arrowDown"></div>
-                    <div class="arrow arrow-left arrow-off" id="arrowLeft"></div>
-                    <div class="arrow arrow-right arrow-off" id="arrowRight"></div>
-                </div>
+            <p class="battery-text">100%</p> <!-- Altere o texto para mostrar diferentes porcentagens de bateria -->
+            <div class="battery">
+                <div class="battery-level" id="battery-level" style="width: 100%;"></div> <!-- Altere a largura para simular diferentes níveis de bateria -->
+            </div>
+        </div>
+
+        <div class="arrows-container">
+            <div>
+                <div class="arrow arrow-up arrow-off" id="arrowUp"></div>
+                <div class="arrow arrow-down arrow-off" id="arrowDown"></div>
+                <div class="arrow arrow-left arrow-off" id="arrowLeft"></div>
+                <div class="arrow arrow-right arrow-off" id="arrowRight"></div>
             </div>
         </div>
     </div>
 
-    <div class="grid-container" id="grid"></div>
+    <div class="lawn">
+        <div class="sun"></div>
+        <div class="grid-container" id="grid"></div>
+    </div>
     
     <script type="text/javascript" src="emulator_functions/index.js"></script>
 </body>
