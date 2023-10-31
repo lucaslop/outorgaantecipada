@@ -4,7 +4,7 @@
 
 |Nomes|Github|
 |---|---|
-|Lucas Ursulino Boaventura|[lboaventura25]https://github.com/lboaventura25|
+|Lucas Ursulino Boaventura|[lboaventura25](https://github.com/lboaventura25)|
 |Lucas Lopes Xavier|[Lucaslop](https://github.com/lucaslop)|
 
 
