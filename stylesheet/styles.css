@@ -107,23 +107,24 @@ body {
   width: 100%;
   display: grid;
   place-content: center;
-  grid-template-columns: repeat(9, 50px);
+  grid-template-columns: repeat(8, 50px);
   grid-template-rows: repeat(8, 50px);
   gap: 1px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 .grid-item {
-  /* width: 50px;
-  height: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.1); */
-
   width: 50px;
   height: 50px;
   background-color: #8db580;
-  border: 2px solid #5a7247;
+  border: 2px solid #344228;
   border-radius: 5px;
-  background-image: linear-gradient(90deg, #8db580 50%, #79a372 50%);
+  background-image: linear-gradient(90deg, #62865b 50%, #455f40 50%);
+}
+
+.cutted {
+  background-image: linear-gradient(90deg, #8db580 50%, #a8d898 50%);
+  background-color: #8db580;
 }
 
 .block {
