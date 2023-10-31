@@ -98,7 +98,7 @@ setInterval(updateSensors, 5000);
 
 
 
-function updateArrows() {
+function updateSensorArrows() {
     if (cutterPosition.row % 2 === 0) {
         if (arrowDirection !== 'right') {
             flashDownArrow();
@@ -129,7 +129,7 @@ function flashDownArrow() {
     setTimeout(() => {
         arrowDown.classList.add('arrow-off');
         arrowDown.classList.remove('arrow-on');
-        updateArrows();
+        updateSensorArrows();
     }, 500); 
 }
 
@@ -207,7 +207,7 @@ function placeBlock() {
 
     grid.children[cutterPosition.row * NUM_ROWS + cutterPosition.col].appendChild(cutter);
     console.log(garden)
-    updateArrows();
+    updateSensorArrows();
 }
 
 function moveCutter() {
@@ -240,10 +240,10 @@ function moveCutter() {
     cutterPosition.dir = finalPath[index++].direction
     garden[cutterPosition.row][cutterPosition.col] = gardenDict.cutter
     visited[cutterPosition.row][cutterPosition.col] = 1
-    updateArrows(); 
+    updateSensorArrows(); 
 
     placeBlock();
-    decreaseBatteryLevel();
+    decreaseBatteryLevelSensor();
 }
 
 function movePetBlock() {
@@ -287,7 +287,7 @@ function resetAnimation() {
     updateBatteryLevel();
 }
 
-function decreaseBatteryLevel() {
+function decreaseBatteryLevelSensor() {
     if (batteryLevel > 0) {
         batteryLevel -= DECREASE_BATTERY;
         updateBatteryLevel();
