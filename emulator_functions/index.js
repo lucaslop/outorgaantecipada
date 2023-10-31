@@ -1,8 +1,33 @@
-const ANIMATION_SPEED = 1000;
-const DECREASE_BATTERY = 2;
+const ANIMATION_SPEED = 500;
+const DECREASE_BATTERY = 1;
+const NUM_ROWS = 8;
+const NUM_COLS = 8;
+const INIT = { x: 0, y: 0}
+const FINAL = { x: 7, y: 0}
 
 let isBlockMoving = true;
 
+const gardenDict = { free: 0, cutter: 1, obstacles: 2, pet: 3 }
+let garden = [
+    [1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+];
+let visited = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+];
 const unexpectedButton = document.getElementById('unexpectedButton');
 const unexpectedLed = document.getElementById('unexpectedLed');
 const horn = document.getElementById('horn');
@@ -21,17 +46,20 @@ const powerLed = document.getElementById('powerLed');
 const startLed = document.getElementById('startLed');
 const simulateBatteryButton = document.getElementById('simulateBatteryButton');
 const batteryText = document.querySelector('.battery-text');
-const blockDir = { right: '-90deg', left: '90deg', up: '180deg', down: '0deg' }
-let blockPosition = { row: 0, col: 0, dir: 'right' };
+const blockDir = { RIGHT: '-90deg', LEFT: '90deg', UP: '180deg', DOWN: '0deg' }
+let finalPath;
+let index = 0
+let cutterPosition = { row: 0, col: 0, dir: 'DOWN' };
 let movingRight = true;
 let arrowDirection = '';  
 let animationInterval;
 let batteryLevel = 100;
 let isPowerOn = false;
 let isAnimationStarted = false;
-let purpleBlockPosition = { row: 0, col: 5 };
+let petcutterPosition = { row: 0, col: 5 };
+let petBlock;
 let movingDown = true;
-let purpleBlockInterval;
+let petBlockInterval;
 
 const blackBlocks = [];
 
@@ -41,7 +69,7 @@ function playHorn() {
 }
 
 function updateArrows() {
-    if (blockPosition.row % 2 === 0) {
+    if (cutterPosition.row % 2 === 0) {
         if (arrowDirection !== 'right') {
             flashDownArrow();
             arrowDirection = 'right';
@@ -84,26 +112,29 @@ while (blackBlocks.length < 3) {
         return rowDiff > 1 || colDiff > 1 || (rowDiff === 1 && colDiff === 1);
     })) {
         blackBlocks.push({ row: randomRow, col: randomCol });
+        garden[randomRow][randomCol] = gardenDict.obstacles
     }
 }
 
 function createGrid() {
-    for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 9; col++) {
+    for (let row = 0; row < NUM_ROWS; row++) {
+        for (let col = 0; col < NUM_COLS; col++) {
             const cell = document.createElement('div');
             cell.classList.add('grid-item');
             grid.appendChild(cell);
         }
     }
 
-    purpleBlock = document.createElement('div');
-    purpleBlock.classList.add('block-purple', 'purple');
+    petBlock = document.createElement('div');
+    petBlock.classList.add('block-purple', 'purple');
 
-    const randomRow = Math.floor(Math.random() * 8);
-    purpleBlockPosition.row = randomRow;
-    purpleBlockPosition.col = 5;
+    const randomRow = Math.floor(Math.random() * NUM_ROWS);
+    const petCol = 5;
+    petcutterPosition.row = randomRow;
+    petcutterPosition.col = petCol;
 
-    grid.children[randomRow * 9 + 5].appendChild(purpleBlock);
+    grid.children[randomRow * NUM_ROWS + petCol].appendChild(petBlock);
+    garden[randomRow][petCol] = gardenDict.pet
 
     placeBlock();
 }
@@ -111,87 +142,103 @@ function createGrid() {
 function placeBlock() {
     grid.innerHTML = '';
 
-    for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 9; j++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
+        for (let j = 0; j < NUM_COLS; j++) {
             const cell = document.createElement('div');
             cell.classList.add('grid-item');
+            if (visited[i][j]) cell.classList.add('cutted')
             grid.appendChild(cell);
         }
     }
 
-    grid.children[purpleBlockPosition.row * 9 + purpleBlockPosition.col].appendChild(purpleBlock);
+    grid.children[petcutterPosition.row * NUM_ROWS + petcutterPosition.col].appendChild(petBlock);
 
     blackBlocks.forEach((block, index) => {
         const blackBlock = document.createElement('div');
         blackBlock.classList.add('block', `block-black-${index + 1}`);
-        grid.children[block.row * 9 + block.col].appendChild(blackBlock);
+        grid.children[block.row * NUM_ROWS + block.col].appendChild(blackBlock);
     });
 
-    const block = document.createElement('div');
-    block.classList.add('block');
-    block.style.cssText = `transform: rotate(${blockDir[blockPosition.dir]})`;
+    const cutter = document.createElement('div');
+    cutter.classList.add('block');
+    cutter.style.cssText = `transform: rotate(${blockDir[cutterPosition.dir]})`;
 
-    if (blockPosition.row === 7 && blockPosition.col === 0) {
-        block.classList.add('ok');
-        block.style.cssText = `transform: rotate(90deg)`;
+    if (cutterPosition.row === (NUM_ROWS - 1) && cutterPosition.col === 0) {
+        cutter.classList.add('ok');
+        cutter.style.cssText = `transform: rotate(90deg)`;
     }
 
-    grid.children[blockPosition.row * 9 + blockPosition.col].appendChild(block);
+    if (blackBlocks.some(b => b.row === cutterPosition.row && b.col === cutterPosition.col)) {
+        console.log('BATEU NOS ITENS')
+    }
+    if (petcutterPosition.row === cutterPosition.row && petcutterPosition.col === cutterPosition.col) {
+        console.log('BATEU NO CACHORROOOOOOOO')
+    }
+
+    grid.children[cutterPosition.row * NUM_ROWS + cutterPosition.col].appendChild(cutter);
+    console.log(garden)
     updateArrows();
 }
 
-function moveBlock() {
-    if (blockPosition.row === 7 && blockPosition.col === 0) {
-        return;
-    }
+function moveCutter() {
+    garden[cutterPosition.row][cutterPosition.col] = gardenDict.free
+    // if (cutterPosition.row === 7 && cutterPosition.col === 0) {
+    //     return;
+    // }
     
-    grid.children[blockPosition.row * 9 + blockPosition.col].removeChild(grid.children[blockPosition.row * 9 + blockPosition.col].firstChild);
+    // grid.children[cutterPosition.row * 9 + cutterPosition.col].removeChild(grid.children[cutterPosition.row * 9 + cutterPosition.col].firstChild);
 
-    if (movingRight) {
-        if (blockPosition.col < 8) {
-            blockPosition.col++;
-        } else {
-            blockPosition.row++;
-            movingRight = false;
-        }
-    } else {
-        if (blockPosition.col > 0) {
-            blockPosition.col--;
-        } else {
-            blockPosition.row++;
-            movingRight = true;
-        }
-    }
+    // if (movingRight) {
+    //     if (cutterPosition.col < 8) {
+    //         cutterPosition.col++;
+    //     } else {
+    //         cutterPosition.row++;
+    //         movingRight = false;
+    //     }
+    // } else {
+    //     if (cutterPosition.col > 0) {
+    //         cutterPosition.col--;
+    //     } else {
+    //         cutterPosition.row++;
+    //         movingRight = true;
+    //     }
+    // }
 
-    blockPosition.dir = movingRight ? 'right' : 'left'
+    cutterPosition.row = finalPath[index].x
+    cutterPosition.col = finalPath[index].y
+
+    cutterPosition.dir = finalPath[index++].direction
+    garden[cutterPosition.row][cutterPosition.col] = gardenDict.cutter
+    visited[cutterPosition.row][cutterPosition.col] = 1
     updateArrows(); 
 
     placeBlock();
     decreaseBatteryLevel();
 }
 
-function movePurpleBlock() {
-    const previousRow = purpleBlockPosition.row;
+function movePetBlock() {
+    garden[petcutterPosition.row][petcutterPosition.col] = gardenDict.free
 
     if (movingDown) {
-        if (purpleBlockPosition.row < 7 && (blockPosition.row !== purpleBlockPosition.row + 1 || blockPosition.col !== purpleBlockPosition.col)) {
-            purpleBlockPosition.row++;
+        if (petcutterPosition.row < 7 && (cutterPosition.row !== petcutterPosition.row + 1 || cutterPosition.col !== petcutterPosition.col)) {
+            petcutterPosition.row++;
         } else {
             movingDown = false;
         }
     } else {
-        if (purpleBlockPosition.row > 0 && (blockPosition.row !== purpleBlockPosition.row - 1 || blockPosition.col !== purpleBlockPosition.col)) {
-            purpleBlockPosition.row--;
+        if (petcutterPosition.row > 0 && (cutterPosition.row !== petcutterPosition.row - 1 || cutterPosition.col !== petcutterPosition.col)) {
+            petcutterPosition.row--;
         } else {
             movingDown = true;
         }
     }
 
-    if (blackBlocks.some(block => block.row === purpleBlockPosition.row && block.col === purpleBlockPosition.col)) {
+    if (blackBlocks.some(block => block.row === petcutterPosition.row && block.col === petcutterPosition.col)) {
         movingDown = !movingDown;
     }
-
-    grid.children[purpleBlockPosition.row * 9 + purpleBlockPosition.col].appendChild(purpleBlock);
+    
+    garden[petcutterPosition.row][petcutterPosition.col] = gardenDict.pet
+    grid.children[petcutterPosition.row * NUM_ROWS + petcutterPosition.col].appendChild(petBlock);
 }
 
 function stopAnimation() {
@@ -200,12 +247,13 @@ function stopAnimation() {
 }
 
 function resetAnimation() {
+    console.log(garden)
     stopAnimation();
     grid.style.display = 'none';
-    blockPosition = { row: 0, col: 0 };
+    cutterPosition = { row: 0, col: 0 };
     movingRight = true;
     batteryLevel = 100;
-    purpleBlock.style.display = 'block';
+    petBlock.style.display = 'block';
     updateBatteryLevel();
 }
 
@@ -253,7 +301,7 @@ function toggleStart() {
             } else {
                 startLed.classList.remove('led-off');
                 startLed.classList.add('led-on');
-                purpleBlock.style.display = 'block';
+                petBlock.style.display = 'block';
                 startAnimation();
             }
         }
@@ -261,18 +309,20 @@ function toggleStart() {
 }
 
 function startAnimation() {
-    if (blockPosition.row === 8) {
-        blockPosition = { row: 0, col: 0 };
+    finalPath = findPath(garden)
+    console.log(finalPath)
+    if (cutterPosition.row === NUM_ROWS) {
+        cutterPosition = { row: 0, col: 0 };
         createGrid();
     }
     if (!isAnimationStarted && isPowerOn && batteryLevel > 0) {
         isAnimationStarted = true;
         animationInterval = setInterval(() => {
-            moveBlock();
+            moveCutter();
         }, ANIMATION_SPEED);
 
-        purpleBlockInterval = setInterval(() => {
-            movePurpleBlock();
+        petBlockInterval = setInterval(() => {
+            movePetBlock();
         }, ANIMATION_SPEED / 2);
     }
 }
