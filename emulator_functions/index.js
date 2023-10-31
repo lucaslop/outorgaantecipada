@@ -68,6 +68,36 @@ function playHorn() {
     hornSound.play();
 }
 
+
+function SensorTemperature() {
+    const baseTemperature = 25; // temperatura base em graus Celsius
+    const variation = Math.random() * 2 - 1; // variação de até 1 grau para mais ou para menos
+    return baseTemperature + variation;
+}
+
+function SensorHumidity() {
+    const baseHumidity = 60; // umidade base em porcentagem
+    const variation = Math.random() * 10 - 5; // variação de até 5% para mais ou para menos
+    return baseHumidity + variation;
+}
+
+function updateSensors() {
+    const temperatureElement = document.getElementById('temperature');
+    const humidityElement = document.getElementById('humidity');
+
+    const temperature = SensorTemperature();
+    const humidity = SensorHumidity();
+
+    temperatureElement.textContent = `Temperatura: ${temperature.toFixed(1)}°C`;
+    humidityElement.textContent = `Umidade: ${humidity.toFixed(1)}%`;
+}
+
+setInterval(updateSensors, 5000);
+
+
+
+
+
 function updateArrows() {
     if (cutterPosition.row % 2 === 0) {
         if (arrowDirection !== 'right') {
