@@ -97,30 +97,35 @@ setInterval(updateSensors, 5000);
 
 
 
-
-function updateSensorArrows() {
-    if (cutterPosition.row % 2 === 0) {
-        if (arrowDirection !== 'right') {
-            flashDownArrow();
-            arrowDirection = 'right';
-        }
-
+function updateSensorArrows(blockdir) {
+    if (blockdir === 'RIGHT') {
         arrowRight.classList.add('arrow-on');
         arrowRight.classList.remove('arrow-off');
         arrowLeft.classList.add('arrow-off');
         arrowLeft.classList.remove('arrow-on');
-    } else {
-        if (arrowDirection !== 'left') {
-            flashDownArrow();
-            arrowDirection = 'left';
-        }
-    
+    } else if (blockdir === 'LEFT') {
         arrowLeft.classList.add('arrow-on');
         arrowLeft.classList.remove('arrow-off');
         arrowRight.classList.add('arrow-off');
         arrowRight.classList.remove('arrow-on');
+    } else if (blockdir === 'DOWN') {
+        arrowDown.classList.add('arrow-on');
+        arrowDown.classList.remove('arrow-off');
+        setTimeout(() => {
+            arrowDown.classList.add('arrow-off');
+            arrowDown.classList.remove('arrow-on');
+        }, 2000);
+    } else if (blockdir === 'UP') {
+        arrowUp.classList.add('arrow-on');
+        arrowUp.classList.remove('arrow-off');
+        setTimeout(() => {
+            arrowUp.classList.add('arrow-off');
+            arrowUp.classList.remove('arrow-on');
+        }, 2000);
     }
 }
+
+
 
 function flashDownArrow() {
     arrowDown.classList.add('arrow-on');
@@ -240,7 +245,7 @@ function moveCutter() {
     cutterPosition.dir = finalPath[index++].direction
     garden[cutterPosition.row][cutterPosition.col] = gardenDict.cutter
     visited[cutterPosition.row][cutterPosition.col] = 1
-    updateSensorArrows(); 
+    updateSensorArrows(cutterPosition.dir); 
 
     placeBlock();
     decreaseBatteryLevelSensor();
