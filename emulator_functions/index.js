@@ -198,46 +198,28 @@ function placeBlock() {
     cutter.classList.add('block');
     cutter.style.cssText = `transform: rotate(${blockDir[cutterPosition.dir]})`;
 
-    if (cutterPosition.row === (NUM_ROWS - 1) && cutterPosition.col === 0) {
+    if (finalPath !== undefined && index >= finalPath.length) {
         cutter.classList.add('ok');
-        cutter.style.cssText = `transform: rotate(90deg)`;
+        cutter.style.cssText = `transform: rotate(${blockDir.DOWN})`;
+        toggleStart();
+        powerLed.classList.remove('led-on');
+        powerLed.classList.add('led-off');
+        isPowerOn = false;
     }
 
     if (blackBlocks.some(b => b.row === cutterPosition.row && b.col === cutterPosition.col)) {
-        console.log('BATEU NOS ITENS')
+        // console.log('BATEU NOS ITENS');
     }
     if (petcutterPosition.row === cutterPosition.row && petcutterPosition.col === cutterPosition.col) {
-        console.log('BATEU NO CACHORROOOOOOOO')
+        // console.log('BATEU NO CACHORROOOOOOOO');
     }
 
     grid.children[cutterPosition.row * NUM_ROWS + cutterPosition.col].appendChild(cutter);
-    console.log(garden)
     updateSensorArrows();
 }
 
 function moveCutter() {
     garden[cutterPosition.row][cutterPosition.col] = gardenDict.free
-    // if (cutterPosition.row === 7 && cutterPosition.col === 0) {
-    //     return;
-    // }
-    
-    // grid.children[cutterPosition.row * 9 + cutterPosition.col].removeChild(grid.children[cutterPosition.row * 9 + cutterPosition.col].firstChild);
-
-    // if (movingRight) {
-    //     if (cutterPosition.col < 8) {
-    //         cutterPosition.col++;
-    //     } else {
-    //         cutterPosition.row++;
-    //         movingRight = false;
-    //     }
-    // } else {
-    //     if (cutterPosition.col > 0) {
-    //         cutterPosition.col--;
-    //     } else {
-    //         cutterPosition.row++;
-    //         movingRight = true;
-    //     }
-    // }
 
     cutterPosition.row = finalPath[index].x
     cutterPosition.col = finalPath[index].y
@@ -282,7 +264,6 @@ function stopAnimation() {
 }
 
 function resetAnimation() {
-    console.log(garden)
     stopAnimation();
     grid.style.display = 'none';
     cutterPosition = { row: 0, col: 0 };
